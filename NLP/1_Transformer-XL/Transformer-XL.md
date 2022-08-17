@@ -155,3 +155,16 @@ attention 기반의 transformer 는 직접적으로 거리가 먼 단어 쌍들�
 
 ## 3. Model
 
+> In this work, we stick to the standard neural approach to modeling the conditional probability.
+
+```
+이 연구에서 우리는 조건부 확률을 모델링하기 위해 일반적인 뉴럴 접근방식을 고수했다.
+```
+
+### 3-1. Vanilla Transformer Language Models
+
+> In order to apply Transformer or self-attention to language modeling, the central problem is how to train a Transformer to effectively encode an arbitrarily long context into a fixed size representation.
+
+```
+Transformer 혹은 self-attention 을 언어 모델에 적용하기 위해
+긴 context 를 고정된 크기의 representation Transformer 를
