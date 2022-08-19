@@ -153,6 +153,8 @@ attention 기반의 transformer 는 직접적으로 거리가 먼 단어 쌍들�
 
 ## 2. Related Work
 
+</br>
+
 ## 3. Model
 
 > In this work, we stick to the standard neural approach to modeling the conditional probability.
@@ -161,10 +163,147 @@ attention 기반의 transformer 는 직접적으로 거리가 먼 단어 쌍들�
 이 연구에서 우리는 조건부 확률을 모델링하기 위해 일반적인 뉴럴 접근방식을 고수했다.
 ```
 
+</br>
+
 ### 3-1. Vanilla Transformer Language Models
 
-> In order to apply Transformer or self-attention to language modeling, the central problem is how to train a Transformer to effectively encode an arbitrarily long context into a fixed size representation.
+> the central problem is how to train a Transformer to effectively encode an arbitrarily long context into a fixed size representation.
 
 ```
-Transformer 혹은 self-attention 을 언어 모델에 적용하기 위해
-긴 context 를 고정된 크기의 representation Transformer 를
+주된 문제는 긴 context 를 어떻게 효과적으로 고정된 크기의 representation 으로 인코딩하여 Transformer 를 train 할 것인가 이다.
+```
+
+---
+
+> Given infinite memory and computation, a simple solution would be to process the entire context sequence using an unconditional Transformer decoder, similar to a feed-forward neural network. However, this is usually infeasible with the limited resource in practice.
+
+```
+제한 없는 컴퓨팅 자원이 주어진다면, FFNN 처럼 제한없이 Transformer decoder 에 전 문맥을 사용하면 된다.
+하지만 실제로는 그것은 불가능하다.
+```
+
+---
+
+> One feasible but crude approximation is to split the entire corpus into shorter segments of manageable sizes, and only train the model within each segment, ignoring all contextual information from previous segments.
+
+```
+한가지 가능하지만 썩 좋지않은 접근방법은 전체 단어집합을 다룰 수 있는 크기의 짧은 segment 들로 나누는 것이다.
+그리고 모델은 이전 segment 에서 온 문맥 정보를 무시하고 각각의 segment 에 대해서만 train 하게 된다.
+```
+
+---
+
+> Under this training paradigm, information never flows across segments in either the forward or backward pass.
+
+```
+이러한 훈련 패러다임에서는 segments 간 정보가 forward 또는 backward 방향으로 교류되지 못한다.
+```
+
+---
+
+> There are two critical limitations of using a fixed-length context.
+
+```
+fixed-length context 를 사용하는 데에는 두가지 치명적인 한계가 존재한다.
+```
+
+---
+
+> First, the largest possible dependency length is upper bounded by the segment length, which is a few hundred on character-level language modeling.
+
+```
+첫 번째는, segment 길이에 의해 가능한 최대 dependency 길이가 상한된다는 것이다.
+```
+
+---
+
+> Second, though it is possible to use padding to respect the sentence or other semantic boundaries, in practice it has been standard practice to simply chunk long text into fixed-length segments due to improved efficiency.
+
+```
+두 번째로 문장이나 의미적 경계를 고려하여 패딩을 사용할 수 있지만,
+실제로는 효율성의 향상을 위해 fixed-length segments 를 사용하는 것이 일반적 이었다.
+```
+
+---
+
+> However, simply chunking a sequence into fixed-length segments will lead to the context fragmentation problem.
+
+```
+하지만, 단순히 fixed-length segments 로 chunking 하는 것은 context fragmentation 문제를 야기할 수 있다.
+```
+
+---
+
+> During evaluation, at each step, the vanilla model also consumes a segment of the same length as in training, but only makes one prediction at the last position.
+
+```
+evaluation 동안, 매 단계에서 바닐라 모델은 training 때와 같은 길이의 segment를 보지만, 마지막 위치에서 하나의 예측을 한다.
+```
+
+Q : 이 부분 잘 이해가 안됨
+
+---
+
+> Then, at the next step, the segment is shifted to the right by only one position, and the new segment has to be processed all from scratch.
+
+```
+그리고 다음 단계에서 segment 는 하나의 position만 움직여져 다시 예측을 수행한다.
+```
+
+![img]()
+
+---
+
+> this procedure ensures that each prediction utilizes the longest possible context exposed during training, and also relieves context fragmentation issue encountered in training.
+
+```
+이러한 과정은 각 예측 단계가 training 시 학습했던 최대한의 긴 문맥을 활용한다.
+그리고 training 시 발생했던 context fragmentation 문제를 어느정도 감소시킨다.
+```
+
+---
+
+> However, this evaluation procedure is extremely expensive.
+
+```
+하지만 이러한 evaluation 과정은 매우 비용이 크다.
+```
+
+</br>
+
+### 3-2. Segment-Level Recurrence with State Reuse
+
+> To address the limitations of using a fixed-length context, we propose to introduce a recurrence mechanism to the Transformer architecture.
+
+```
+fixed-length context 사용에 따른 한계를 다루기 위해 우리는 재귀적 방법을 Transformer architecture 에 사용했다.
+```
+
+---
+
+> During training, the hidden state sequence computed for the previous segment is *fixed* and *cached* to be reused as an extended context when the model processes the next new segment.
+
+```
+trainig 동안 모델이 다음 segment 를 처리할 때, 이전 segment 에서 계산된 hidden state 는
+extended context 로 다시 사용되기 위해 고정되고 저장된다.
+```
+
+---
+
+> this additional input allows the network to exploit information in the history, leading to an ability of modeling longer-term dependency and avoiding context fragmentation.
+
+```
+이 추가적인 입력은 네트워크가 과거 정보를 활용할 수 있게 해주고 이는 더 긴 dependency 를 모델링 할 수 있게 됩니다. 그리고 context fragmentation 도 피할 수 있습니다.
+```
+
+---
+ 
+ </br>
+ 
+ 길이 $L$,  두 segment $\mathbf{s}\_{\tau} = \[x_{\tau, 1}, \cdots, x_{\tau, L}] \ , \mathbf{s}\_{\tau + 1} = \[x_{\tau + 1, 1}, \cdots, x_{\tau + 1, L}]$, n-th layer hidden state $\mathbf{h}^{n}\_{\tau}.
+ 
+ $$\mathbf{\tilde{h}}^{n-1}\_{\tau + 1} = \[SG(\mathbf{h}^{n-1}\_{\tau}) \circ \mathbf{h}^{n-1}\_{\tau + 1}]$$
+ 
+ 
+ Q
+ 1. 새로운 h
