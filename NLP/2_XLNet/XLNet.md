@@ -13,6 +13,7 @@ autoregressive 한 언어 모델보다 더 좋은 성능을 보인다.
 
 ```
 하지만, mask 된 input에 의존하는 BERT는 mask된 위치간의 의존성을 무시하고 pretrain 과 finetune 의 불일치 문제가 있다.
+(실제 모델이 마주하게 되는 input에는 [mask] 토큰이 없기 때문.)
 ```
 
 ---
