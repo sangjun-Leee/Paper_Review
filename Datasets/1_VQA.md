@@ -87,4 +87,50 @@ $\to$ 게다가, 이미지에 관한 질문들이 세부적인 정보를 필요�
 
 $\to$ 이러한 이유 때문에 쉽게 평가 가능하다.
 
+---
+
+> In this paper, we present both an open-ended answering task and a multiple choice task.
+
+$\to$ 본 논문에서는, open-ended answering task 와 multiple-choice task 모두 제공한다.
+
+---
+
+> Unlike the open-ended task ~, the multiple-choice task only requires an algorithm to pick from a predefined list of possible answers.
+
+$\to$ open-ended task 와는 다르게, multiple-choice task 는 미리 정의된 가능한 정답 리스트로부터 고르기만 하면 된다.
+
+---
+
+> Three questions were collected for each image or scene.
+
+$\to$ 각 이미지나 풍경에 대해서 세개의 질문들을 모았다.
+
+---
+
+> Each question was answered by ten subjects along with their confidence.
+
+$\to$ 각 질문에 대해서 10명의 사람들이 정답을 제시했다.
+
+---
+
+> The dataset contains over 760K questions with around 10M answers.
+
+$\to$ dataset 은 76만개의 질문들과 천만개의 정답으로 구성되어있다.
+
+---
+
+> We analyze the types of questions asked and the types of answers provided.
+
+$\to$ 우리는 질문들과 그 답변들을 분석했다.
+
+---
+
+**SMRY : VQA 는 다양한 AI 능력을 요구하는 open-ended, free-form 형태의 dataset 이다. 평가 또한 쉽고 multiple-choice 문제도 포함한다. 76만개의 질문들과 천만개의 정답들로 이루어져 있다. 각 질문에 대한 정답을 분석하여 평가하였다.**
+
+</br>
+
+## 2. Related Work
+
+
+
 
