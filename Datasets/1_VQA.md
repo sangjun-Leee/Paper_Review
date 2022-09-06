@@ -1,4 +1,4 @@
-# VQA: Visual Question Answering
+# <div align="center"> VQA: Visual Question Answering </div>
 
 <div align="center">
   Aishwarya Agrawal, Jiasen Lu, Stanislaw Antol, Margaret Mitchell, C. Lawrence Zitnick, Dhruv Batra, Devi Parikh
