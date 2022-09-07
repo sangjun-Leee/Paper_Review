@@ -93,6 +93,10 @@ $\to$ 일반적인 FFN과 비교했을 때 비슷한 크기의 층을 가지고 
 
 $\to$ 이러한 CNN의 매력적인 성질에도 불구하고, 고화질의 이미지에 대해서 계산량이 비싸기 때문에 그동안 잘 쓰지 못했다.
 
+Q : 학습이 쉬운 것이랑 학습에 드는 비용이 큰 것이랑은 다른 문제인가? (학습이 쉽다는 것은 backprop 하는 과정에서 큰 문제가 없다는 것, 학습 비용이 크다는 것은 컴퓨팅 자원이 많이 필요한 것으로 이해?) 
+
 ---
 
 > Luckily, current GPUs, ~, are powerful enough to facilitate the training of interestingly-large CNNs, ~.
+
+$\to$ 
