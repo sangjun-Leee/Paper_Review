@@ -85,13 +85,13 @@ $\to$ CNN 은 크기를 다양하게 조절할 수 있고, 자연의 이미지�
 
 > Thus, compared to standard feedforward neural networks with similarly-sized layers, CNNs have much fewer connections and parameters and so they are easier to train, while their theoretically-best performance is likely to be only slightly worse.
 
-$\to$ 일반적인 FFN과 비교했을 때 비슷한 크기의 층을 가지고 있을 때, 최고 성능은 약간 떨어지더라도 CNN은 훨씬 더 적은 파라미터를 가지므로 학습하기 더 쉽다.
+$\to$ 일반적인 FFN과 비교하면 비슷한 크기의 층을 가지고 있을 때, 최고 성능은 약간 떨어지더라도 CNN은 훨씬 더 적은 파라미터를 가지므로 학습하기 더 쉽다.
 
 ---
 
 > Despite the attractive qualities of CNNs, ~, they have still been prohibitively expensive to apply in large scale to high-resolution images.
 
-$\to$ 이러한 CNN의 매력적인 성질에도 불구하고, 고화질의 이미지에 대해서 계산량이 비싸기 때문에 그동안 잘 쓰지 못했다.
+$\to$ 이러한 CNN의 매력적인 성질에도 불구하고, 고화질의 이미지에 대해서 계산량이 매우 크다.
 
 Q : 학습이 쉬운 것이랑 학습에 드는 비용이 큰 것이랑은 다른 문제인가? (학습이 쉽다는 것은 backprop 하는 과정에서 큰 문제가 없다는 것, 학습 비용이 크다는 것은 컴퓨팅 자원이 많이 필요한 것으로 이해?) 
 
@@ -131,7 +131,7 @@ $\to$ GTX 580 3GB 두대로 5~6 일 동안 학습함.
 
 > ImageNet is a dataset of over 15 million labeled high-resolution images belonging to roughly 22,000 categories.
 
-$\to$ ImageNet 은 약 22,000 개의 카테고리의 1500만 개의 고해상도 이미지 데이터 셋이다.
+$\to$ ImageNet 은 약 22,000 개의 카테고리가 대략 1500만 개 정도인 고해상도 이미지 데이터 셋이다.
 
 ---
 
@@ -175,5 +175,24 @@ $\to$ 직사각형 크기의 이미지는 짧은 부분을 256 크기로 먼저 
 
 $\to$ 모델은 8개의 학습된 층으로 이루어져있다. - 5개의 convolution 층과 3개의 FCN.
 
+</br>
+
 ### 3-1. ReLU Nonlinearity
 
+> In terms of training time with gradient descent, these saturating nonlinearities are much slower than the non-saturating nonlinearity f(x) = max(0, x).
+
+$\to$ gradient descent 를 통해 학습할 때 걸리는 시간을 보면, saturating nonlinearities(sigmoid, tanh) 함수들은 non-saturating nonlinearity 함수인 max(0, x) 보다 많이 느리다.
+
+Q : saturating/non-saturating 의 기준은 무엇?
+
+---
+
+>  Following Nair and Hinton, we refer to neurons with this nonlinearity as Rectified Linear Units (ReLUs).
+
+$\to$ Nair 와 Hinton 을 따라 우리는 이러한 nonlinearity 함수를 Rectified Linear Units(ReLUs) 라고 한다.
+
+---
+
+> This is demonstrated in Figure 1, which shows the number of iterations required to reach 25% training error on the CIFAR-10 dataset for a particular four-layer convolutional network.
+
+$\to$ Figure 1 에 ReLU 와 tanh 가 training error 25% 까지 도달하는데 걸리는 epoch 을 실험한 것을 나타내었다. 
