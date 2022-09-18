@@ -271,7 +271,7 @@ $\to$ Response normalization 은 top-1 과 top-5 error rates 를 각각 1.4%, 1.
 \<Local Response Normalization expression>
 
 ```math
-b_{x, y}^{i} = a_{x, y}^{i} / \left k + \alpha \sum_{j=max(0, i-n/2)}^{min(N-1, i+n/2)}{(a_{x, y}^{j})^{2} \right ^\beta
+b_{x, y}^{i} = a_{x, y}^{i} / \left k + \alpha \sum_{j=max(0, i-n/2)}^{min(N-1, i+n/2)}{(a_{x, y}^{j})^{2} \right ^{\beta}
 ```
 
 </br>
@@ -330,3 +330,74 @@ $\to$ 2, 4, 5 번째 convolutional 층은 오직 같은 GPU 에 있는 이전 �
 
 ---
 
+> The kernels of the third convolutional layer are connected to all kernel maps in the second layer. The neurons in the fullyconnected layers are connected to all neurons in the previous layer.
+
+$\to$ 세 번째 convolution layer 는 두 번째 층의 모든 kernel map 들과 연결된다. fcn 의 모든 층은 이전 층과 전부 연결된다.
+
+---
+
+> Response-normalization layers follow the first and second convolutional layers. Max-pooling layers, of the kind described in Section 3.4, follow both response-normalization layers as well as the fifth convolutional layer. The ReLU non-linearity is applied to the output of every convolutional and fully-connected layer.
+
+$\to$ Response-normalization layer 는 첫 번째와 두 번째 convolution layer 뒤에 온다. Max-pooling layer 는 response-normalization layer 의 뒤와 다섯 번째 convolution layer 뒤에 온다. ReLU 는 모든 convolution layer 와 fcn 에 적용된다.
+
+---
+
+> The first convolutional layer filters the 224×224×3 input image with 96 kernels of size 11×11×3 with a stride of 4 pixels (this is the distance between the receptive field centers of neighboring neurons in a kernel map).
+
+$\to$ 첫 번째 convolution layer filter 는 11×11×3 의 크기이며, 96개의 kernel 을 사용하고 stride 의 값은 4이다. 224×224×3 크기의 이미지를 입력으로 받는다.
+
+---
+
+> The second convolutional layer takes as input the (response-normalized and pooled) output of the first convolutional layer and filters it with 256 kernels of size 5 × 5 × 48.
+
+$\to$ 두 번째 convolution layer 는 첫 번째 cnn 층의 출력값에 response-normalized 와 pooling 을 해준 값을 입력으로 받으며 5×5×48 크기의 kernel 을 256개 사용한다.
+
+---
+
+> The third, fourth, and fifth convolutional layers are connected to one another without any intervening pooling or normalization layers.
+
+$\to$ 3, 4, 5 번째 convolution layer 는 pooling 이나 normalization 과정이 없이 연결된다.
+
+---
+
+> The third convolutional layer has 384 kernels of size 3 × 3 × 256 connected to the (normalized, pooled) outputs of the second convolutional layer.
+
+$\to$ 세 번째 convolution layer 두 번째 cnn 층에서 normalized & pooling 과정을 거친 값을 받고 3×3×256 크기의 kernel 을 384개 사용한다.
+
+---
+
+> The fourth convolutional layer has 384 kernels of size 3 × 3 × 192 , and the fifth convolutional layer has 256 kernels of size 3 × 3 × 192. The fully-connected layers have 4096 neurons each.
+
+$\to$ 네 번째 convolution layer 는 3×3×192 크기의 kernel 을 384 개 사용하고 다섯 번째 convolution layer 는 3×3×192 크기의 kernel 을 256개 사용한다. fcn layer 는 각각 4096 개의 뉴런을 가진다.
+
+---
+
+<p align="center">
+    <img src="./IMG/AlexNet_Fig2.png">
+</p>
+
+CNN 계산
+
+```math
+O = {I - K + 2P \over S} + 1
+```
+
+**SMRY   
+Input : 224×224×3 image   
+Conv1 : 11×11×3, 96 kernels, 4 stride   
+MaxPool1 : 3×3, 2 stride   
+Norm1   
+Conv2 : 5×5×48, 256 kernels   
+MaxPool2 : 3×3, 2 stride   
+Norm2   
+Conv3 : 3×3×256, 384 kernels   
+Conv4 : 3×3×192, 384 kernels   
+Conv5 : 3×3×192, 256 kernels   
+MaxPool3 : 3×3, 2 stride   
+FCN1 : 6×6×256 - 4096   
+FCN2 : 4096 - 4096   
+FCN3 : 4096 - 1000**
+
+</br>
+
+## 4. Reducing Overfitting
