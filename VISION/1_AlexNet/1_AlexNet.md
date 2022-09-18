@@ -8,6 +8,11 @@
 </div>
 
 </br>
+</br>
+
+paper : https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf
+
+</br>
 
 ## 0. Abstract
 
@@ -195,4 +200,133 @@ $\to$ Nair 와 Hinton 을 따라 우리는 이러한 nonlinearity 함수를 Rect
 
 > This is demonstrated in Figure 1, which shows the number of iterations required to reach 25% training error on the CIFAR-10 dataset for a particular four-layer convolutional network.
 
-$\to$ Figure 1 에 ReLU 와 tanh 가 training error 25% 까지 도달하는데 걸리는 epoch 을 실험한 것을 나타내었다. 
+$\to$ Figure 1 에 ReLU(solid line) 와 tanh(dashed line) 가 training error 25% 까지 도달하는데 걸리는 epoch 을 실험한 것을 나타내었다. 
+
+<p align="center">
+    <img src="./IMG/AlexNet_Fig1.png", height="250px", width="250px">
+</p>
+
+</br>
+
+### 3-2. Training on Multiple GPUs
+
+> It turns out that 1.2 million training examples are enough to train networks which are too big to fit on one GPU. Therefore we spread the net across two GPUs.
+
+$\to$ 120만 개의 학습데이터는 모델을 학습하기에는 충분하지만, 너무 커서 하나의 GPU 로는 불가능하다. 따라서 두 대의 GPU를 사용하였다.
+
+---
+
+>  The parallelization scheme that we employ essentially puts half of the kernels (or neurons) on each GPU, with one additional trick: the GPUs communicate only in certain layers.
+
+$\to$ 뉴런의 절반을 각 GPU에 나누어 학습을 진행했고 특정 층에서 GPU 간 연결을 해주는 식으로 병렬화를 진행하였다.
+
+---
+
+> This means that, for example, the kernels of layer 3 take input from all kernel maps in layer 2. However, kernels in layer 4 take input only from those kernel maps in layer 3 which reside on the same GPU.
+
+$\to$ 예를 들어, 세 번째 층에서는 두 번째 층으로 부터 모든 입력값을 받지만, 네 번째 층에서는 같은 GPU에 있는 세 번째 층에서의 입력값만을 받습니다.
+
+---
+
+> Choosing the pattern of connectivity is a problem for cross-validation, but this allows us to precisely tune the amount of communication until it is an acceptable fraction of the amount of computation.
+
+$\to$ GPU 간 연결 방식을 선택하는 것은 계산량이 허용되는 부분까지 정확하게 계산해 낼 수 있습니다.(하나의 GPU 가 가능한 계산량을 알아내어 조절해 준다는 말)
+
+---
+
+> This scheme reduces our top-1 and top-5 error rates by 1.7% and 1.2%, respectively, as compared with a net with half as many kernels in each convolutional layer trained on one GPU.
+
+$\to$ 이 방법은 한 대의 GPU를 사용하여 학습을 진행했을 때 보다 top-5, top-1 error rates 를 각각 1.7%, 1.2% 낮추었다.
+
+---
+
+> The two-GPU net takes slightly less time to train than the one-GPU net.
+
+$\to$ 두 대의 GPU 는 한 대의 GPU 를 사용했을 때 보다 학습시간도 감소하였다.
+
+---
+
+</br>
+
+### 3-3. Local Response Normalization
+
+> We still find that the following local normalization scheme aids generalization.
+
+$\to$ local normalization 이 generalization 성능을 도와준다는 것을 발견했다.
+
+---
+
+> We applied this normalization after applying the ReLU nonlinearity in certain layers.
+
+$\to$ 우리는 Local Response Normalization 을 특정 층에서 ReLU 함수 뒤에 적용하였다.
+
+---
+
+> Response normalization reduces our top-1 and top-5 error rates by 1.4% and 1.2%, respectively. We also verified the effectiveness of this scheme on the CIFAR-10 dataset: a four-layer CNN achieved a 13% test error rate without normalization and 11% with normalization.
+
+$\to$ Response normalization 은 top-1 과 top-5 error rates 를 각각 1.4%, 1.2% 감소시켰다. 같은 방법을 가지고 CIFAR-10 데이터 셋에 대해서도 효과적이라는 것을 확인했다 : 4층의 CNN 에 대해서 normalization 을 적용하지 않았을 때는 13% 의 error rate, 적용했을 때는 11% 의 error rate 를 달성했다.
+
+---
+
+\<Local Response Normalization expression>
+
+```math
+b_{x, y}^{i} = a_{x, y}^{i} / \left k + \alpha \sum_{j=max(0, i-n/2)}^{min(N-1, i+n/2)}{(a_{x, y}^{j})^{2} \right ^\beta
+```
+
+</br>
+
+### 3-4. Overlapping Pooling
+
+> Pooling layers in CNNs summarize the outputs of neighboring groups of neurons in the same kernel map.
+
+$\to$ CNN 에서 Pooling layer 는 같은 kernel map 안에 있는 인접한 뉴런들의 결과값들을 요약해준다.
+
+---
+
+> Traditionally, the neighborhoods summarized by adjacent pooling units do not overlap.
+
+$\to$ 전통적으로 pooling layer 는 overlap 하지 않았다.
+
+---
+
+> If we set s < z, we obtain overlapping pooling. This is what we use throughout our network, with s = 2 and z = 3. (s: stride, z: kernel size)
+
+$\to$ 만약 stride 를 pooling kernel size 보다 작게 설정한다면, 우리는 overlapping pooling 을 얻을 수 있고 우리의 network 에서 s=2, z=3 으로 사용했다.
+
+---
+
+> This scheme reduces the top-1 and top-5 error rates by 0.4% and 0.3%, respectively, as compared with the non-overlapping scheme s = 2, z = 2, which produces output of equivalent dimensions.
+
+$\to$ 이 방법은 s=2, z=2 를 주어 overlapping 을 하지 않았을 때와 비교했을 때, top-1, top-5 error rate 를 각각 0.4%, 0.3% 감소시켰다.
+
+---
+
+> We generally observe during training that models with overlapping pooling find it slightly more difficult to overfit.
+
+$\to$ 우리는 overlapping pooling 을 적용한 모델이 학습과정 중에 overfit 되기가 더 힘들다는 것을 관찰했다.
+
+---
+
+</br>
+
+### 3-5. Overall Architecture
+
+> As depicted in Figure 2, the net contains eight layers with weights; the first five are convolutional and the remaining three are fullyconnected.
+
+$\to$ Figure 2 에서 처럼, 모델은 다섯개의 convolutional 층과 세개의 fcn 으로 구성되어있다.
+
+---
+
+> The output of the last fully-connected layer is fed to a 1000-way softmax which produces a distribution over the 1000 class labels.
+
+$\to$ fcn 의 마지막 결과는 1000 개의 클래스 라벨들을 분류하기 위해 1000 개의 값이 softmax 에 주어진다.
+
+---
+
+> The kernels of the second, fourth, and fifth convolutional layers are connected only to those kernel maps in the previous layer which reside on the same GPU.
+
+$\to$ 2, 4, 5 번째 convolutional 층은 오직 같은 GPU 에 있는 이전 층의 kernel map 과 연결된다.
+
+---
+
